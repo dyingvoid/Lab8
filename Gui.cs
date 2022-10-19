@@ -2,59 +2,60 @@
 
 public class Gui
 {
-    private int _windowHeight;
     private int _windowWidth;
-    private Command[] _commands;
-    private Dictionary<Command.TimeRange, List<Command>> _dCommands;
+    private int _windowHeight;
 
-    public Gui(int height, int width, string[] fileContent)
+    public Gui(int width, int height, List<Command> commands)
     {
         if(height >= 0 && width >= 0)
         {
-            _windowHeight = height;
             _windowWidth = width;
-        }
-        
-        Command.TimeRangeSameRange timeRangeComp = new Command.TimeRangeSameRange();
-        _dCommands = new Dictionary<Command.TimeRange, List<Command>>(timeRangeComp);
-        
-        _ = GetCommandsFromFile(fileContent);
-    }
-
-    public bool GetCommandsFromFile(string[] fileContent)
-    {
-        _commands = new Command[fileContent.Length];
-        for (int i = 0; i < _commands.Length; i++)
-        {
-            Command command = new Command(fileContent[i]);
-            command.GetInf();
-            AddCommandToDict(command);
-            _commands[i] = command;
-        }
-        PrintCommands();
-        return true;
-    }
-
-    public void AddCommandToDict(Command command)
-    {
-        Command.TimeRange range = command._timeOfRendering;
-        List<Command> lCommand = new List<Command>(){command};
-        if (!_dCommands.TryAdd(range, lCommand))
-        {
-            _dCommands[range].Add(command);
+            _windowHeight = height;
+            //StartGuiStream();
+            ProcessCommands(commands);
         }
     }
 
-    public void PrintCommands()
+    private void StartGuiStream()
     {
-        foreach (var (key, value) in _dCommands)
+        PrintScreen();
+    }
+
+    private void PrintScreen()
+    {
+        PrintHorizontalBorder(true);
+        for (int i = 0; i < _windowHeight; ++i)
         {
-            foreach (var command in value)
+            Console.Write('*');
+            for (int j = 0; j < _windowWidth - 2; ++j)
             {
-                command.GetInf();
-                Console.Write(" ");
+                Console.Write(' ');
             }
-            Console.WriteLine();
+            Console.WriteLine('*');
         }
+
+        PrintHorizontalBorder(false);
+    }
+
+    public void PrintHorizontalBorder(bool isTop)
+    {
+        for (int i = 0; i < _windowWidth; ++i)
+        {
+            Console.Write('*');
+        }
+        if(isTop)
+            Console.WriteLine();
+    }
+
+    private void ProcessCommands(List<Command> commandList)
+    {
+        foreach (var command in commandList)
+        {
+            Console.WriteLine(HowManyLinesTextTakes(command._phrase));
+        }
+    }
+    private int HowManyLinesTextTakes(string text)
+    {
+        return text.Length / _windowWidth;
     }
 }

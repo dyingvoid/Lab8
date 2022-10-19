@@ -29,10 +29,17 @@ public class Command
     {
         string[] details = line.Split(new char[] {' ', ',', '[', ']', '-'}, 
             StringSplitOptions.RemoveEmptyEntries);
+        
         _timeOfRendering = new TimeRange(details[0], details[1]);
         Tuple<Pos, Color> posColor = SetPosColor(line, details);
         _position = posColor.Item1;
         _colour = posColor.Item2;
+        
+        SetCommandPhrase(line);
+    }
+
+    private void SetCommandPhrase(string line)
+    {
         if (_isPosColorDefault)
             _phrase = line.Substring(14, line.Length - 14);
         else
@@ -47,9 +54,16 @@ public class Command
         int sIdx = line.IndexOf(']');
         Tuple<Pos, Color> pair;
         
-        _isPosColorDefault = !(firstSquareBracketIdx == fIdx &&
-                             sIdx > firstSquareBracketIdx &&
-                             sIdx <= secondSquareBracketMaxIdx);
+        _isPosColorDefault = DoPosAndColorMatchPosition(firstSquareBracketIdx, 
+            fIdx, sIdx, secondSquareBracketMaxIdx);
+        pair = CreateTuplePosColor(details);
+
+        return pair;
+    }
+
+    private Tuple<Pos, Color> CreateTuplePosColor(string[] details)
+    {
+        Tuple<Pos, Color> pair;
         try
         {
             pair = _isPosColorDefault
@@ -63,6 +77,14 @@ public class Command
         }
 
         return pair;
+    }
+
+    private static bool DoPosAndColorMatchPosition(int firstSquareBracketIdx, 
+        int fIdx, int sIdx, int secondSquareBracketMaxIdx)
+    {
+        return !(firstSquareBracketIdx == fIdx &&
+                 sIdx > firstSquareBracketIdx &&
+                 sIdx <= secondSquareBracketMaxIdx);
     }
 
     public void GetInf()
@@ -79,49 +101,14 @@ public class Command
         {
             Start = DateTime.ParseExact(start, "mm:ss",
                 System.Globalization.CultureInfo.InvariantCulture);
+            
             End = DateTime.ParseExact(end, "mm:ss",
                 System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        public static bool operator ==(TimeRange l, TimeRange r)
-        {
-            
-            return l.Start == r.Start && l.End == r.End;
-        }
-
-        public static bool operator !=(TimeRange l, TimeRange r)
-        {
-            return !(l == r);
-        }
-
-        public static int ToInt(DateTime date)
-        {
-            int timeInInt = date.Second + (date.Minute * 60);
-            return timeInInt;
-        }
-        
         public string GetRange()
         {
             return Start.ToString("mm:ss") + " - " + End.ToString("mm:ss");
-        }
-    }
-
-    public class TimeRangeSameRange : EqualityComparer<TimeRange>
-    {
-        public override bool Equals(TimeRange l, TimeRange r)
-        {
-            if (l is null && r is null)
-                return true;
-            else if (l is null || r is null)
-                return false;
-
-            return l == r;
-        }
-
-        public override int GetHashCode(TimeRange range)
-        {
-            int hCode = TimeRange.ToInt(range.Start) ^ TimeRange.ToInt(range.End);
-            return hCode;
         }
     }
 }
