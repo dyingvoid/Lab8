@@ -14,7 +14,7 @@ class FileReader
     public string FilePath
     {
         get => _filePath;
-        set
+        init
         {
             if (File.Exists(value))
             {
@@ -40,6 +40,4 @@ class FileReader
             FileContent = new string[] { };
         }
     }
-    
-    
 }

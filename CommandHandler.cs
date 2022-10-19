@@ -3,7 +3,6 @@
 public class CommandHandler
 {
     private Dictionary<DateTime, List<Command>> _dCommands;
-
     public Dictionary<DateTime, List<Command>> DCommands => _dCommands;
 
     public CommandHandler(string[] fileContent)
@@ -20,12 +19,11 @@ public class CommandHandler
             Command command = new Command(fileContent[i]);
             AddCommandToDict(command);
         }
-        PrintCommands();
     }
 
     public void AddCommandToDict(Command command)
     {
-        Command.TimeRange range = command._timeOfRendering;
+        Command.TimeRange range = command.TimeOfRendering;
         for (DateTime i = range.Start; i <= range.End; i += System.TimeSpan.FromSeconds(1))
         {
             List<Command> lCommand = new List<Command>(){command};

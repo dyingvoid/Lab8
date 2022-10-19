@@ -4,34 +4,34 @@ public class Gui
 {
     private int _windowWidth;
     private int _windowHeight;
+    private char _horizontalSymbol;
+    private char _verticalSymbol;
 
-    public Gui(int width, int height, List<Command> commands)
+    public Gui(char horizontalSymbol, char verticalSymbol,
+        int largestCommandPhrase)
     {
-        if(height >= 0 && width >= 0)
-        {
-            _windowWidth = width;
-            _windowHeight = height;
-            //StartGuiStream();
-            ProcessCommands(commands);
-        }
+        _horizontalSymbol = horizontalSymbol;
+        _verticalSymbol = verticalSymbol;
+        SetScreenSize(largestCommandPhrase);
     }
 
-    private void StartGuiStream()
+    private void SetScreenSize(int largestCommandPhrase)
     {
-        PrintScreen();
+        _windowWidth = 50;
+        _windowHeight = 25;
     }
 
-    private void PrintScreen()
+    public void Draw(List<Command> commandList)
     {
         PrintHorizontalBorder(true);
         for (int i = 0; i < _windowHeight; ++i)
         {
-            Console.Write('*');
+            Console.Write(_verticalSymbol);
             for (int j = 0; j < _windowWidth - 2; ++j)
             {
                 Console.Write(' ');
             }
-            Console.WriteLine('*');
+            Console.WriteLine(_verticalSymbol);
         }
 
         PrintHorizontalBorder(false);
@@ -41,7 +41,7 @@ public class Gui
     {
         for (int i = 0; i < _windowWidth; ++i)
         {
-            Console.Write('*');
+            Console.Write(_horizontalSymbol);
         }
         if(isTop)
             Console.WriteLine();
@@ -51,11 +51,16 @@ public class Gui
     {
         foreach (var command in commandList)
         {
-            Console.WriteLine(HowManyLinesTextTakes(command._phrase));
+            Console.WriteLine(HowManyLinesTextTakes(command.Phrase));
         }
     }
     private int HowManyLinesTextTakes(string text)
     {
         return text.Length / _windowWidth;
+    }
+
+    public void ClearConsole()
+    {
+        Console.Clear();
     }
 }

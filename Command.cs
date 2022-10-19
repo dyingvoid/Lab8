@@ -19,34 +19,34 @@ public enum Color
 }
 public class Command
 {
-    public TimeRange _timeOfRendering;
-    public Pos _position;
-    public Color _colour;
-    public bool _isPosColorDefault;
-    public string _phrase;
+    public TimeRange TimeOfRendering;
+    public Pos Position;
+    public Color Colour;
+    public bool IsPositionAndColorDefault;
+    public string Phrase;
 
     public Command(string line)
     {
         string[] details = line.Split(new char[] {' ', ',', '[', ']', '-'}, 
             StringSplitOptions.RemoveEmptyEntries);
         
-        _timeOfRendering = new TimeRange(details[0], details[1]);
-        Tuple<Pos, Color> posColor = SetPosColor(line, details);
-        _position = posColor.Item1;
-        _colour = posColor.Item2;
+        TimeOfRendering = new TimeRange(details[0], details[1]);
+        Tuple<Pos, Color> posColor = SetPositionAndColor(line, details);
+        Position = posColor.Item1;
+        Colour = posColor.Item2;
         
         SetCommandPhrase(line);
     }
 
     private void SetCommandPhrase(string line)
     {
-        if (_isPosColorDefault)
-            _phrase = line.Substring(14, line.Length - 14);
+        if (IsPositionAndColorDefault)
+            Phrase = line.Substring(14, line.Length - 14);
         else
-            _phrase = line.Substring(line.IndexOf(']') + 2, line.Length - line.IndexOf(']') - 2);
+            Phrase = line.Substring(line.IndexOf(']') + 2, line.Length - line.IndexOf(']') - 2);
     }
 
-    public Tuple<Pos, Color> SetPosColor(string line, string[] details)
+    public Tuple<Pos, Color> SetPositionAndColor(string line, string[] details)
     {
         const int firstSquareBracketIdx = 14;
         const int secondSquareBracketMaxIdx = 28;
@@ -54,7 +54,7 @@ public class Command
         int sIdx = line.IndexOf(']');
         Tuple<Pos, Color> pair;
         
-        _isPosColorDefault = DoPosAndColorMatchPosition(firstSquareBracketIdx, 
+        IsPositionAndColorDefault = ArePositionAndColorInRightPlace(firstSquareBracketIdx, 
             fIdx, sIdx, secondSquareBracketMaxIdx);
         pair = CreateTuplePosColor(details);
 
@@ -66,7 +66,7 @@ public class Command
         Tuple<Pos, Color> pair;
         try
         {
-            pair = _isPosColorDefault
+            pair = IsPositionAndColorDefault
                 ? Tuple.Create(Pos.Bottom, Color.White)
                 : Tuple.Create(Enum.Parse<Pos>(details[2]), Enum.Parse<Color>(details[3]));
         }
@@ -79,7 +79,7 @@ public class Command
         return pair;
     }
 
-    private static bool DoPosAndColorMatchPosition(int firstSquareBracketIdx, 
+    private static bool ArePositionAndColorInRightPlace(int firstSquareBracketIdx, 
         int fIdx, int sIdx, int secondSquareBracketMaxIdx)
     {
         return !(firstSquareBracketIdx == fIdx &&
@@ -89,7 +89,7 @@ public class Command
 
     public void GetInf()
     {
-        Console.WriteLine($"{_timeOfRendering.GetRange()} [{_position}, {_colour}] {_phrase}");
+        Console.WriteLine($"{TimeOfRendering.GetRange()} [{Position}, {Colour}] {Phrase}");
     }
 
     public class TimeRange
