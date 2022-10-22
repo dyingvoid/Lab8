@@ -61,6 +61,11 @@ public class Gui
         return 0;
     }
 
+    /// <summary>
+    /// Prints top and bottom border
+    /// if isTop true, prints additional \n symbol
+    /// </summary>
+    /// <param name="isTop">is border on top</param>
     public void PrintHorizontalBorder(bool isTop)
     {
         for (int i = 0; i < _windowWidth; ++i)
@@ -71,15 +76,27 @@ public class Gui
             Console.WriteLine();
     }
 
+    /// <summary>
+    /// Turn list of commands to dict with (command x,y coordinates: command)
+    /// </summary>
+    /// <param name="commandList">List of Command</param>
+    /// <returns>Dict(x,y of command : command)</returns>
     private Dictionary<Tuple<int, int>, Command> ProcessCommands(List<Command> commandList)
     {
         var dict = new Dictionary<Tuple<int, int>, Command>();
-        foreach (var command in commandList)
+        try
         {
-            Tuple<int, int> posXY = WhereToPut(command);
-            dict.Add(posXY, command);
+            foreach (var command in commandList)
+            {
+                Tuple<int, int> posXY = PosToCoordinatesTuple(command);
+                dict.Add(posXY, command);
+            }
         }
-        //MAKE CHEEEEEEEEEEEEEEEEEEEEEEEECKS!
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex.Message} in Gui.ProcessCommands()");
+        }
+
         return dict;
     }
     private int HowManyLinesTextTakes(string text)
@@ -87,19 +104,31 @@ public class Gui
         return text.Length / _windowWidth;
     }
 
-    private Tuple<int, int> WhereToPut(Command command)
+    /// <summary>
+    /// Turns Command.Pos to coordinates fot Gui class
+    /// </summary>
+    /// <param name="command"></param>
+    /// <returns>Tuple x,y coordinates</returns>
+    private Tuple<int, int> PosToCoordinatesTuple(Command command)
     {
-        // Dictionary Pos Position coords X, Y
+        // Dictionary Pos, position coords tuple X, Y
         var posXY = new Dictionary<Pos, Tuple<int, int>>()
         {
-            {Pos.Top,  Tuple.Create(_windowWidth / 2, 0) },
-            {Pos.Left, Tuple.Create(1, _windowHeight / 2) },
-            {Pos.Right, Tuple.Create(_windowWidth - command.Phrase.Length - 3, _windowHeight / 2) },
-            {Pos.Bottom, Tuple.Create(_windowWidth / 2, _windowHeight - 1)}
+            {Pos.Top,  Tuple.Create(_windowWidth / 2 - 1, 0) },
+            {Pos.Left, Tuple.Create(1, _windowHeight / 2 - 1) },
+            {Pos.Right, Tuple.Create(_windowWidth - command.Phrase.Length - 3, _windowHeight / 2 - 1) },
+            {Pos.Bottom, Tuple.Create(_windowWidth / 2 - 1, _windowHeight - 1)}
         };
-        
-        //MAKE SOME CHECKS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        return posXY[command.Position];
+
+        try
+        {
+            return posXY[command.Position];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"{ex.Message} in Gui.PosToCoordinatesTuple(), return is Tuple({0, 0})");
+            return Tuple.Create(0, 0);
+        }
     }
 
     public void ClearConsole()
