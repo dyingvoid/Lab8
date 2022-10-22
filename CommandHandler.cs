@@ -50,4 +50,19 @@ public class CommandHandler
             Console.WriteLine();
         }
     }
+
+    public int LargestPhraseLength()
+    {
+        int length = 0;
+        foreach (var (key, commandList) in _dCommands)
+        {
+            foreach (var command in commandList)
+            {
+                if (command.Phrase.Length > length)
+                    length = command.Phrase.Length;
+            }
+        }
+
+        return length;
+    }
 }

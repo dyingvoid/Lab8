@@ -21,7 +21,7 @@ public class Command
 {
     public TimeRange TimeOfRendering;
     public Pos Position;
-    public Color Colour;
+    public ConsoleColor Colour;
     public bool IsPositionAndColorDefault;
     public string Phrase;
 
@@ -31,7 +31,7 @@ public class Command
             StringSplitOptions.RemoveEmptyEntries);
         
         TimeOfRendering = new TimeRange(details[0], details[1]);
-        Tuple<Pos, Color> posColor = SetPositionAndColor(line, details);
+        Tuple<Pos, ConsoleColor> posColor = SetPositionAndColor(line, details);
         Position = posColor.Item1;
         Colour = posColor.Item2;
         
@@ -46,13 +46,13 @@ public class Command
             Phrase = line.Substring(line.IndexOf(']') + 2, line.Length - line.IndexOf(']') - 2);
     }
 
-    public Tuple<Pos, Color> SetPositionAndColor(string line, string[] details)
+    public Tuple<Pos, ConsoleColor> SetPositionAndColor(string line, string[] details)
     {
         const int firstSquareBracketIdx = 14;
         const int secondSquareBracketMaxIdx = 28;
         int fIdx = line.IndexOf('[');
         int sIdx = line.IndexOf(']');
-        Tuple<Pos, Color> pair;
+        Tuple<Pos, ConsoleColor> pair;
         
         IsPositionAndColorDefault = ArePositionAndColorInRightPlace(firstSquareBracketIdx, 
             fIdx, sIdx, secondSquareBracketMaxIdx);
@@ -61,19 +61,19 @@ public class Command
         return pair;
     }
 
-    private Tuple<Pos, Color> CreateTuplePosColor(string[] details)
+    private Tuple<Pos, ConsoleColor> CreateTuplePosColor(string[] details)
     {
-        Tuple<Pos, Color> pair;
+        Tuple<Pos, ConsoleColor> pair;
         try
         {
             pair = IsPositionAndColorDefault
-                ? Tuple.Create(Pos.Bottom, Color.White)
-                : Tuple.Create(Enum.Parse<Pos>(details[2]), Enum.Parse<Color>(details[3]));
+                ? Tuple.Create(Pos.Bottom, ConsoleColor.White)
+                : Tuple.Create(Enum.Parse<Pos>(details[2]), Enum.Parse<ConsoleColor>(details[3]));
         }
         catch (Exception ex)
         {
             Console.WriteLine($"{ex.Source} says {ex.Message}. Setting command's color ans position to default.");
-            pair = Tuple.Create(Pos.Bottom, Color.White);
+            pair = Tuple.Create(Pos.Bottom, ConsoleColor.White);
         }
 
         return pair;
