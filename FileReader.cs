@@ -40,4 +40,13 @@ class FileReader
             FileContent = new string[] { };
         }
     }
+
+    public void PrintContent()
+    {
+        foreach (var str in FileContent)
+        {
+            Console.WriteLine(str);
+        }
+        Console.WriteLine();
+    }
 }
