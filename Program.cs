@@ -21,13 +21,11 @@ namespace Lab8
                 string time = "";
                 while (time != "q")
                 {
-                    Console.WriteLine("Enter date time");
+                    Console.WriteLine("Enter date time or 'q' to continue.");
                     time = Console.ReadLine();
                     CheckBalanceAtTime(bankAccount, time);
                 }
             }
-
-            Console.ReadKey();
         }
 
         private static void CheckBalanceAtTime(BankAccount bankAccount, string? time)

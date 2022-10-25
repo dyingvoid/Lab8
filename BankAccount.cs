@@ -17,12 +17,8 @@ public class BankAccount
         foreach (var command in commandList)
         {
             //commandList can contain commands with the same time and uses default sort by time
-            Console.Write(_currentBalance.ToString() + " ");
-            
             OperateBalance(DefineOperation(command), command.Amount);
             AddBalanceToBalanceHistory(command);
-            
-            Console.WriteLine(_currentBalance.ToString());
         }
     }
 

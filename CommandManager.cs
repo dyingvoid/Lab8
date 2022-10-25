@@ -17,7 +17,6 @@ public class CommandManager
             
             //Commands can have the same time, how do we sort???
             _commandList.Sort(CompareCommands);
-            PrintContent();
         }
         else
         {
