@@ -18,7 +18,10 @@ public class BankAccount
         {
             //commandList can contain commands with the same time and uses default sort by time
             Console.Write(_currentBalance.ToString() + " ");
+            
             OperateBalance(DefineOperation(command), command.Amount);
+            AddBalanceToBalanceHistory(command);
+            
             Console.WriteLine(_currentBalance.ToString());
         }
     }
@@ -49,7 +52,8 @@ public class BankAccount
     public void OperateBalance(Func<BigInteger, bool> balanceOperation, BigInteger amount)
     {
         var tempBalance = _currentBalance;
-        if (!balanceOperation(amount))
+        
+        if (!IsAmountPositive(amount) || !balanceOperation(amount))
         {
             Console.WriteLine("Error while operating balance.");
             return;
@@ -57,7 +61,6 @@ public class BankAccount
 
         //positive for deposit, negative for withdraw
         _lastOperationAmount = _currentBalance - tempBalance;
-        
     }
     
     private bool CreateAccount(BigInteger amount)
@@ -97,6 +100,16 @@ public class BankAccount
         _currentBalance -= amount;
         return true;    
     }
+    
+    /// <summary>
+    /// Is amount bigger than 0
+    /// </summary>
+    /// <param name="amount"></param>
+    /// <returns></returns>
+    private bool IsAmountPositive(BigInteger amount)
+    {
+        return amount >= 0;
+    }
 
     private bool ErrorOperation(BigInteger amount)
     {
@@ -116,5 +129,69 @@ public class BankAccount
         }
 
         return ErrorOperation(_lastOperationAmount);
+    }
+    
+    private void AddBalanceToBalanceHistory(Command command)
+    {
+        _timeBalanceHistory[command.DateTime] = _currentBalance;
+    }
+
+    public BigInteger CheckBalanceAtTime(DateTime time)
+    {
+        DateTime tempTime;
+        BigInteger tempBalance = new BigInteger(-1);
+
+        if (!DoesAccountExist() || !DidAccountExistAtTime(time))
+        {
+            tempBalance = new BigInteger(-1);
+            return tempBalance;
+        }
+
+        tempBalance = FindBalanceAtTime(time, tempBalance);
+        
+        return tempBalance;
+    }
+
+    private BigInteger FindBalanceAtTime(DateTime time, BigInteger tempBalance)
+    {
+        if (time > _timeBalanceHistory.Last().Key)
+            return _currentBalance;
+        
+        foreach (var (timeHistory, balance) in _timeBalanceHistory)
+        {
+            if (timeHistory == time)
+            {
+                tempBalance = balance;
+                break;
+            }
+            else if (timeHistory < time)
+            {
+                tempBalance = balance;
+            }
+        }
+
+        return tempBalance;
+    }
+
+    private bool DoesAccountExist()
+    {
+        if (_timeBalanceHistory.Count == 0)
+        {
+            Console.WriteLine("Account does not exist.");
+            return false;
+        }
+
+        return true;
+    }
+    
+    private bool DidAccountExistAtTime(DateTime time)
+    {
+        if (time < _timeBalanceHistory.First().Key)
+        {
+            Console.WriteLine("Account did not exist.");
+            return false;
+        }
+        
+        return true;
     }
 }

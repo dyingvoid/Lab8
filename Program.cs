@@ -17,9 +17,31 @@ namespace Lab8
             {
                 CommandManager commandManager = new CommandManager(file.FileContent);
                 BankAccount bankAccount = new BankAccount(commandManager.CommandList);
+
+                string time = "";
+                while (time != "q")
+                {
+                    Console.WriteLine("Enter date time");
+                    time = Console.ReadLine();
+                    CheckBalanceAtTime(bankAccount, time);
+                }
             }
 
             Console.ReadKey();
+        }
+
+        private static void CheckBalanceAtTime(BankAccount bankAccount, string? time)
+        {
+            try
+            {
+                BigInteger balance =  bankAccount.CheckBalanceAtTime(DateTime.ParseExact(time, "yyyy-MM-dd hh:mm",
+                    System.Globalization.CultureInfo.InvariantCulture));
+                Console.WriteLine(balance.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Wrong date.");
+            }
         }
     }
 }
