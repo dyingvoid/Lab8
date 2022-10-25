@@ -4,20 +4,22 @@ namespace Lab8;
 
 public class BankAccount
 {
-    private BigInteger _balance;
-    private bool _acccountCreated;
-    private Stack<BigInteger> _operations;
+    private BigInteger _currentBalance;
+    private bool _accountCreated;
+    private BigInteger _lastOperationAmount;
+    private SortedDictionary<DateTime, BigInteger> _timeBalanceHistory;
 
     public BankAccount(List<Command> commandList)
     {
-        _acccountCreated = false;
-        _operations = new Stack<BigInteger>();
-        
+        _accountCreated = false;
+        _timeBalanceHistory = new SortedDictionary<DateTime, BigInteger>();
+
         foreach (var command in commandList)
         {
-            Console.Write(_balance.ToString() + " ");
+            //commandList can contain commands with the same time and uses default sort by time
+            Console.Write(_currentBalance.ToString() + " ");
             OperateBalance(DefineOperation(command), command.Amount);
-            Console.WriteLine(_balance.ToString());
+            Console.WriteLine(_currentBalance.ToString());
         }
     }
 
@@ -44,27 +46,33 @@ public class BankAccount
         }
     }
     
+    public void OperateBalance(Func<BigInteger, bool> balanceOperation, BigInteger amount)
+    {
+        var tempBalance = _currentBalance;
+        if (!balanceOperation(amount))
+        {
+            Console.WriteLine("Error while operating balance.");
+            return;
+        }
+
+        //positive for deposit, negative for withdraw
+        _lastOperationAmount = _currentBalance - tempBalance;
+        
+    }
+    
     private bool CreateAccount(BigInteger amount)
     {
-        if (_acccountCreated || amount < 0)
+        if (_accountCreated || amount < 0)
         {
             Console.WriteLine("Account already created.");
             return false;
         }
         
-        _balance = amount;
-        _acccountCreated = true;
+        _currentBalance = amount;
+        _accountCreated = true;
         return true;
     }
-
-    public void OperateBalance(Func<BigInteger, bool> balanceOperation, BigInteger amount)
-    {
-        var tempBalance = _balance;
-        if (balanceOperation(amount))
-        {
-            _operations.Push(_balance - tempBalance);
-        }
-    }
+    
     private bool Deposit(BigInteger amount)
     {
         if (amount <= 0)
@@ -73,19 +81,20 @@ public class BankAccount
             return false;
         }
         
-        _balance += amount;
+        _currentBalance += amount;
         return true;
     }
 
     private bool WithDraw(BigInteger amount)
     {
-        if (amount > _balance)
+        if (amount > _currentBalance)
         {
-            Console.WriteLine($"Not enough balance({_balance}) to withdraw {amount}. Deposit {amount - _balance}.");
+            Console.WriteLine($"Not enough balance({_currentBalance}) to withdraw {amount}." +
+                              $" Deposit {amount - _currentBalance} to withdraw.");
             return false;
         }
 
-        _balance -= amount;
+        _currentBalance -= amount;
         return true;    
     }
 
@@ -97,26 +106,15 @@ public class BankAccount
 
     private bool Revert(BigInteger amount)
     {
-        BigInteger lastOperationAmount;
-        try
+        if (_lastOperationAmount > 0)
         {
-            lastOperationAmount = _operations.Peek();
+            return WithDraw(_lastOperationAmount);
         }
-        catch (InvalidOperationException ex)
+        else if (_lastOperationAmount < 0)
         {
-            Console.WriteLine("_operations stack is empty.");
-            return false;
+            return Deposit(BigInteger.Abs(_lastOperationAmount));
         }
 
-        if (lastOperationAmount > 0)
-        {
-            return WithDraw(lastOperationAmount);
-        }
-        else if (lastOperationAmount < 0)
-        {
-            return Deposit(BigInteger.Abs(lastOperationAmount));
-        }
-
-        return ErrorOperation(lastOperationAmount);
+        return ErrorOperation(_lastOperationAmount);
     }
 }

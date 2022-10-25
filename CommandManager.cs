@@ -14,6 +14,10 @@ public class CommandManager
         {
             _commandList = new List<Command>();
             ConvertFileContentToCommands(fileContent);
+            
+            //Commands can have the same time, how do we sort???
+            _commandList.Sort(CompareCommands);
+            PrintContent();
         }
         else
         {
@@ -63,5 +67,21 @@ public class CommandManager
         }
 
         return answer;
+    }
+
+    private int CompareCommands(Command x, Command y)
+    {
+        DateTime xDateTime = x.DateTime;
+        DateTime yDateTime = y.DateTime;
+        return DateTime.Compare(xDateTime, yDateTime);
+    }
+    
+    public void PrintContent()
+    {
+        foreach (var command in _commandList)
+        {
+            Console.WriteLine(command.DateTime.ToString() + " " + command.Amount + " " + command.Type);
+        }
+        Console.WriteLine();
     }
 }

@@ -15,11 +15,9 @@ namespace Lab8
 
             foreach (var file in fileArr)
             {
-                file.PrintContent();
+                CommandManager commandManager = new CommandManager(file.FileContent);
+                BankAccount bankAccount = new BankAccount(commandManager.CommandList);
             }
-
-            CommandManager commandManager = new CommandManager(goodFile.FileContent);
-            BankAccount bankAccount = new BankAccount(commandManager.CommandList);
 
             Console.ReadKey();
         }
