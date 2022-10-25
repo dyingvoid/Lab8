@@ -6,6 +6,8 @@ public class CommandManager
 {
     private List<Command> _commandList;
 
+    public List<Command> CommandList => _commandList;
+
     public CommandManager(string[] fileContent)
     {
         if (HasStartBalance(fileContent[0]))

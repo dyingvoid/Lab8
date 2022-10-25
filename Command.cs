@@ -3,8 +3,9 @@ using System.Numerics;
 
 namespace Lab8;
 
-enum OperationType
+public enum OperationType
 {
+    Create,
     In,
     Out,
     Revert,
@@ -16,18 +17,23 @@ public class Command
     private DateTime _dateTime;
     private BigInteger _amount;
     private OperationType _type;
-    public bool IsGood;
+    private bool IsGood;
+
+    public DateTime DateTime => _dateTime;
+    public BigInteger Amount => _amount;
+    public OperationType Type => _type;
 
     public Command(string[] command)
     {
         switch (command.Length)
         {
             case 1:
-                IsGood = CreateAccount(command[0]);
+                IsGood = SetInitialAmount(command[0]) &&
+                         SetOperationType("Create");
                 break;
             case 3:
                 IsGood = SetDateTime(command[0], command[1]) &&
-                         SetOperationType(command[3]);
+                         SetOperationType(command[2]);
                 break;
             case 4:
                 IsGood = SetDateTime(command[0], command[1]) &&
@@ -40,7 +46,7 @@ public class Command
         }
     }
 
-    private bool CreateAccount(string amount)
+    private bool SetInitialAmount(string amount)
     {
         BigInteger integerAmount;
         if (BigInteger.TryParse(amount, out integerAmount) && integerAmount >= 0)
@@ -49,7 +55,7 @@ public class Command
             return true;
         }
         
-        Console.WriteLine("Error while creating account. First line of file must be positive integer value.");
+        Console.WriteLine("Error in account creating command. First line of file must be positive integer value.");
         return false;
     }
 
@@ -113,4 +119,6 @@ public class Command
 
         return true;
     }
+    
+    
 }

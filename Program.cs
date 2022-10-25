@@ -19,6 +19,7 @@ namespace Lab8
             }
 
             CommandManager commandManager = new CommandManager(goodFile.FileContent);
+            BankAccount bankAccount = new BankAccount(commandManager.CommandList);
 
             Console.ReadKey();
         }
