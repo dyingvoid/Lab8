@@ -15,6 +15,7 @@ public class CommandManager
             _commandList = new List<Command>();
             ConvertFileContentToCommands(fileContent);
             
+            //Compare by time
             //Commands can have the same time, how do we sort???
             _commandList.Sort(CompareCommands);
         }
@@ -25,6 +26,10 @@ public class CommandManager
         }
     }
 
+    /// <summary>
+    /// Iterates through file and makes Command objects
+    /// </summary>
+    /// <param name="fileContent">string array commands</param>
     private void ConvertFileContentToCommands(string[] fileContent)
     {
         for (int i = 0; i < fileContent.Length; ++i)
@@ -35,7 +40,7 @@ public class CommandManager
             AddCommandToList(commandProperties);
         }
     }
-
+    
     private void AddCommandToList(string[] commandProperties)
     {
         if (IsRightCommandLength(commandProperties, new int[3] { 1, 3, 4 }))
@@ -48,6 +53,7 @@ public class CommandManager
         }
     }
 
+    // Is command a number, that is initial balance
     private bool HasStartBalance(string commandProperty)
     {
         BigInteger checkInputBalance;
@@ -56,7 +62,14 @@ public class CommandManager
 
         return answer;
     }
-
+    
+    /// <summary>
+    /// Checks if commands from commandProperties are at least one of sizes
+    /// in commandLength
+    /// </summary>
+    /// <param name="commandProperties"></param>
+    /// <param name="commandLengths"></param>
+    /// <returns></returns>
     private bool IsRightCommandLength(string[] commandProperties, int[] commandLengths)
     {
         bool answer = false;
@@ -68,6 +81,12 @@ public class CommandManager
         return answer;
     }
 
+    /// <summary>
+    /// Compares commands by DateTime
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns>bool of DateTime.Compare(DateTime, DateTime)</returns>
     private int CompareCommands(Command x, Command y)
     {
         DateTime xDateTime = x.DateTime;
@@ -75,6 +94,9 @@ public class CommandManager
         return DateTime.Compare(xDateTime, yDateTime);
     }
     
+    /// <summary>
+    /// Print every command fields in _commandList
+    /// </summary>
     public void PrintContent()
     {
         foreach (var command in _commandList)

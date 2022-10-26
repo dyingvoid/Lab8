@@ -46,7 +46,7 @@ namespace Lab8
         {
             try
             {
-                BigInteger balance =  bankAccount.CheckBalanceAtTime(DateTime.ParseExact(time, "yyyy-MM-dd hh:mm",
+                BigInteger balance =  bankAccount.CheckForErrorsFindBalanceAtTime(DateTime.ParseExact(time, "yyyy-MM-dd hh:mm",
                     System.Globalization.CultureInfo.InvariantCulture));
                 Console.WriteLine(balance.ToString());
             }

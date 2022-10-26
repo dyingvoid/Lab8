@@ -23,6 +23,11 @@ public class Command
     public BigInteger Amount => _amount;
     public OperationType Type => _type;
 
+    /// <summary>
+    /// There are three types of commands.
+    /// IsGood points whether object was initialized with no errors.
+    /// </summary>
+    /// <param name="command"></param>
     public Command(string[] command)
     {
         switch (command.Length)
@@ -46,6 +51,7 @@ public class Command
         }
     }
 
+    // Initial amount can be 0 and positive number
     private bool SetInitialAmount(string amount)
     {
         BigInteger integerAmount;
@@ -59,6 +65,7 @@ public class Command
         return false;
     }
 
+    // Types of commands described in OperationType enum
     private bool SetOperationType(string type)
     {
         type = UpFirstLetter(type);
@@ -88,6 +95,12 @@ public class Command
         return type;
     }
 
+    /// <summary>
+    /// method is only used for OperationType.In and Out,
+    /// amount must be bigger than 0
+    /// </summary>
+    /// <param name="amount"></param>
+    /// <returns></returns>
     private bool SetAmount(string amount)
     {
         BigInteger bigIntegerAmount;

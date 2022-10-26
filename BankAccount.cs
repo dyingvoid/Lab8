@@ -22,6 +22,14 @@ public class BankAccount
         }
     }
 
+    /// <summary>
+    /// Defines operation type, based on command.Type
+    /// </summary>
+    /// <param name="command">Command object</param>
+    /// <returns>
+    /// Operation delegate, ErrorOperation for unknown
+    /// command.Type or for Command.Type == Wrong
+    /// </returns>
     private Func<BigInteger, bool> DefineOperation(Command command)
     {
         OperationType operationType = command.Type;
@@ -45,7 +53,13 @@ public class BankAccount
         }
     }
     
-    public void OperateBalance(Func<BigInteger, bool> balanceOperation, BigInteger amount)
+    /// <summary>
+    /// Uses one of account operations, and sets _balance difference to
+    /// _lastOperationAmount
+    /// </summary>
+    /// <param name="balanceOperation">operation delegate</param>
+    /// <param name="amount">amount for operation</param>
+    private void OperateBalance(Func<BigInteger, bool> balanceOperation, BigInteger amount)
     {
         var tempBalance = _currentBalance;
         
@@ -59,6 +73,7 @@ public class BankAccount
         _lastOperationAmount = _currentBalance - tempBalance;
     }
     
+    // Possible to create account with 0 _balance
     private bool CreateAccount(BigInteger amount)
     {
         if (_accountCreated || amount < 0)
@@ -72,6 +87,7 @@ public class BankAccount
         return true;
     }
     
+    // Amount must be > 0
     private bool Deposit(BigInteger amount)
     {
         if (amount <= 0)
@@ -84,6 +100,7 @@ public class BankAccount
         return true;
     }
 
+    // Checks _balance for possibility of withdraw
     private bool WithDraw(BigInteger amount)
     {
         if (amount > _currentBalance)
@@ -97,22 +114,22 @@ public class BankAccount
         return true;    
     }
     
-    /// <summary>
-    /// Is amount bigger than 0
-    /// </summary>
-    /// <param name="amount"></param>
-    /// <returns></returns>
     private bool IsAmountPositive(BigInteger amount)
     {
         return amount >= 0;
     }
-
+    
     private bool ErrorOperation(BigInteger amount)
     {
         Console.WriteLine($"Error operation called. {amount} was met.");
         return false;
     }
 
+    /// <summary>
+    /// Cancels last operation by calling the opposite method
+    /// </summary>
+    /// <param name="amount">Isn't used, made for compatibility</param>
+    /// <returns>bool of called opposite method, or bool of ErrorOperation</returns>
     private bool Revert(BigInteger amount)
     {
         if (_lastOperationAmount > 0)
@@ -132,7 +149,13 @@ public class BankAccount
         _timeBalanceHistory[command.DateTime] = _currentBalance;
     }
 
-    public BigInteger CheckBalanceAtTime(DateTime time)
+    /// <summary>
+    /// Check balance at specified time, checks if account exists(-ed),
+    /// Uses FindBalanceAtTime()
+    /// </summary>
+    /// <param name="time">specified time</param>
+    /// <returns>balance, or -1 if account did not or does not exist</returns>
+    public BigInteger CheckForErrorsFindBalanceAtTime(DateTime time)
     {
         DateTime tempTime;
         BigInteger tempBalance = new BigInteger(-1);
@@ -148,6 +171,14 @@ public class BankAccount
         return tempBalance;
     }
 
+    
+    /// <summary>
+    /// Used by CheckForErrorsFindBalanceAtTime() to iterate through history
+    /// (time : balance), does not check for errors
+    /// </summary>
+    /// <param name="time"></param>
+    /// <param name="tempBalance"></param>
+    /// <returns>balance at time</returns>
     private BigInteger FindBalanceAtTime(DateTime time, BigInteger tempBalance)
     {
         if (time > _timeBalanceHistory.Last().Key)
