@@ -6,25 +6,39 @@ namespace Lab8
     {
         static void Main()
         {
-            FileReader goodFile = new FileReader(@"C:\Users\Administrator\RiderProjects\Lab8\NewFile2.txt");
-            FileReader badFile = new FileReader(@"C:\Users\Administrator\RiderProjects\Lab8\FalseFileTask2.txt");
-
-            FileReader[] fileArr = new FileReader[2];
-            fileArr[0] = badFile;
-            fileArr[1] = goodFile;
-
-            foreach (var file in fileArr)
+            string? filePath = "";
+            FileReader? file = null;
+            
+            while(filePath == "")
             {
-                CommandManager commandManager = new CommandManager(file.FileContent);
-                BankAccount bankAccount = new BankAccount(commandManager.CommandList);
+                InitiateFileReader(ref filePath, ref file);
+            }
+            
+            CommandManager commandManager = new CommandManager(file.FileContent);
+            BankAccount bankAccount = new BankAccount(commandManager.CommandList);
 
-                string time = "";
-                while (time != "q")
-                {
-                    Console.WriteLine("Enter date time or 'q' to continue.");
-                    time = Console.ReadLine();
-                    CheckBalanceAtTime(bankAccount, time);
-                }
+            string time = "";
+            while (time != "q")
+            {
+                Console.WriteLine("Enter date time or 'q' to exit.");
+                time = Console.ReadLine();
+                CheckBalanceAtTime(bankAccount, time);
+            }
+            
+        }
+
+        private static void InitiateFileReader(ref string? filePath, ref FileReader? file)
+        {
+            Console.WriteLine("Enter path to a file.");
+            filePath = Console.ReadLine();
+
+            try
+            {
+                file = new FileReader(filePath);
+            }
+            catch (NullReferenceException ex)
+            {
+                filePath = new string ("");
             }
         }
 
