@@ -35,6 +35,7 @@ namespace Lab8
             try
             {
                 file = new FileReader(filePath);
+                filePath = file.FilePath;
             }
             catch (NullReferenceException ex)
             {
