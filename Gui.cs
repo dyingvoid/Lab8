@@ -16,10 +16,16 @@ public class Gui
 
     private void SetScreenSize(int largestCommandPhrase)
     {
+        // made like this, so line can always be in screen scope
         _windowWidth = 50 + largestCommandPhrase;
         _windowHeight = 25;
     }
 
+    /// <summary>
+    /// Iterates through matrix[_windowHeight, _windowWidth],
+    /// printing content if it lies on coordinates
+    /// </summary>
+    /// <param name="commandList">commands which content to print</param>
     public void Draw(List<Command> commandList)
     {
         Dictionary<Tuple<int, int>, Command> commandDict = ProcessCommands(commandList);
@@ -36,15 +42,29 @@ public class Gui
         PrintHorizontalBorder(false);
     }
 
+    /// <summary>
+    /// Iterates through _windowsWidth and prints content if
+    /// it lies on coordinates
+    /// </summary>
+    /// <param name="commandDict"></param>
+    /// <param name="i"></param>
     private void PrintContent(Dictionary<Tuple<int, int>, Command> commandDict, int i)
     {
         for (int j = 0; j < _windowWidth - 2; ++j)
         {
+            // Increase j by length of content
             j += PrintStroke(commandDict, j, i);
             Console.Write(' ');
         }
     }
 
+    /// <summary>
+    /// Prints content if it's beginning lies on j, i coordinates
+    /// </summary>
+    /// <param name="commandDict"></param>
+    /// <param name="j"></param>
+    /// <param name="i"></param>
+    /// <returns>Length of content to print</returns>
     private static int PrintStroke(Dictionary<Tuple<int, int>, Command> commandDict, int j, int i)
     {
         Command temp;
@@ -105,7 +125,7 @@ public class Gui
     }
 
     /// <summary>
-    /// Turns Command.Pos to coordinates fot Gui class
+    /// Turns Command.Pos to coordinates for Gui class
     /// </summary>
     /// <param name="command"></param>
     /// <returns>Tuple x,y coordinates</returns>

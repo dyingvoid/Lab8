@@ -10,13 +10,6 @@ public enum Pos
     Bottom
 }
 
-public enum Color
-{
-    Red,
-    Green,
-    Blue,
-    White
-}
 public class Command
 {
     public TimeRange TimeOfRendering;
@@ -24,7 +17,7 @@ public class Command
     public ConsoleColor Colour;
     public bool IsPositionAndColorDefault;
     public string Phrase;
-
+    
     public Command(string line)
     {
         string[] details = line.Split(new char[] {' ', ',', '[', ']', '-'}, 
@@ -46,6 +39,15 @@ public class Command
             Phrase = line.Substring(line.IndexOf(']') + 2, line.Length - line.IndexOf(']') - 2);
     }
 
+    /// <summary>
+    /// Setter with roughs checks for right format
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="details"></param>
+    /// <returns>
+    /// Tuple(Position, ConsoleColor), if line does not have information,
+    /// or bad format - returns Tuple(Pos.Bottom, ConsoleColor.White)
+    /// </returns>
     public Tuple<Pos, ConsoleColor> SetPositionAndColor(string line, string[] details)
     {
         const int firstSquareBracketIdx = 14;
@@ -61,6 +63,14 @@ public class Command
         return pair;
     }
 
+    /// <summary>
+    /// Creates Tuple(Pos, ConsoleColor) based on IsPositionAndColorDefault
+    /// </summary>
+    /// <param name="details"></param>
+    /// <returns>
+    /// for true IsPositionAndColorDefault return Tuple(Pos, ConsoleColor) from details,
+    /// for false and bad input returns Tuple(Pos.Bottom, ConsoleColor.White)
+    /// </returns>
     private Tuple<Pos, ConsoleColor> CreateTuplePosColor(string[] details)
     {
         Tuple<Pos, ConsoleColor> pair;
@@ -79,6 +89,15 @@ public class Command
         return pair;
     }
 
+    /// <summary>
+    /// Check used by SetPositionAndColor(), compares indexes of square brackets
+    /// to be in right place
+    /// </summary>
+    /// <param name="firstSquareBracketIdx"></param>
+    /// <param name="fIdx"></param>
+    /// <param name="sIdx"></param>
+    /// <param name="secondSquareBracketMaxIdx"></param>
+    /// <returns>false for right place, true for bad place</returns>
     private static bool ArePositionAndColorInRightPlace(int firstSquareBracketIdx, 
         int fIdx, int sIdx, int secondSquareBracketMaxIdx)
     {
