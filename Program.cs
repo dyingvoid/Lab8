@@ -22,6 +22,10 @@ namespace Lab8
             {
                 Console.WriteLine("Enter date time or 'q' to exit.");
                 time = Console.ReadLine();
+                
+                if (time == "q")
+                    break;
+                
                 CheckBalanceAtTime(bankAccount, time);
             }
             
