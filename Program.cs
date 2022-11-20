@@ -18,7 +18,7 @@ namespace Lab8
             BankAccount bankAccount = new BankAccount(commandManager.CommandList);
 
             string time = "";
-            while (time != "q")
+            while (time != "q" && bankAccount.AccountCreated)
             {
                 Console.WriteLine("Enter date time or 'q' to exit.");
                 time = Console.ReadLine();

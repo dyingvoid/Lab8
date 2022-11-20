@@ -9,10 +9,18 @@ public class BankAccount
     private BigInteger _lastOperationAmount;
     private SortedDictionary<DateTime, BigInteger> _timeBalanceHistory;
 
+    public bool AccountCreated => _accountCreated;
+
     public BankAccount(List<Command> commandList)
     {
         _accountCreated = false;
         _timeBalanceHistory = new SortedDictionary<DateTime, BigInteger>();
+
+        if (commandList.Count <= 0)
+        {
+            _currentBalance = 0;
+            _lastOperationAmount = 0;
+        }
 
         foreach (var command in commandList)
         {
